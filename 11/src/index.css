@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #080915;
+  color: #e8eaf0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 移动端允许 body 滚动 */
+@media (max-width: 767px) {
+  body, #root {
+    height: auto;
+    overflow: visible;
+  }
+}
+
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #12121a;
+}
+::-webkit-scrollbar-thumb {
+  background: #2d2d4e;
+  border-radius: 3px;
+}
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+.pnl-positive { color: #9ca3af; }
+.pnl-negative { color: #ff4466; }
+
+.log-text { font-size: 15px; line-height: 1.6; }
+
+[data-log-area] { font-size: 15px !important; line-height: 1.6 !important; }
+
+/* 价格上涨闪烁 */
+@keyframes flash-green {
+  0%   { color: #d1d5db; text-shadow: 0 0 8px rgba(209,213,219,0.5); }
+  100% { color: inherit; text-shadow: none; }
+}
+/* 价格下跌闪烁 */
+@keyframes flash-red {
+  0%   { color: #ff4466; text-shadow: 0 0 8px #ff446680; }
+  100% { color: inherit; text-shadow: none; }
+}
+.price-up   { animation: flash-green 0.8s ease-out; }
+.price-down { animation: flash-red   0.8s ease-out; }
+
+/* 日志条目入场动画 */
+@keyframes log-enter {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.log-item-enter { animation: log-enter 0.25s ease-out; }
+
+/* 卡片弹出 */
+@keyframes card-pop {
+  0%   { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  60%  { transform: translateY(1px) scale(1.005); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.card-pop { animation: card-pop 0.3s ease-out; }
+
+/* Header 数字跳动 */
+@keyframes num-bump {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+.num-bump { animation: num-bump 0.35s ease-out; }
+
+/* Bot 呼吸光晕 */
+@keyframes bot-glow {
+  0%, 100% { box-shadow: 0 0 6px 1px rgba(232,234,240,0.12), 0 0 0 0 rgba(232,234,240,0.08); }
+  50%       { box-shadow: 0 0 14px 4px rgba(232,234,240,0.2), 0 0 24px 8px rgba(232,234,240,0.08); }
+}
+.bot-glow { animation: bot-glow 2s ease-in-out infinite; }
+
+/* 心跳脉冲点 */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  14%       { transform: scale(1.4); opacity: 1; }
+  28%       { transform: scale(1);   opacity: 0.7; }
+  42%       { transform: scale(1.2); opacity: 1; }
+}
+.heartbeat { animation: heartbeat 1.4s ease-in-out infinite; }
+
+/* 心跳线波形 */
+@keyframes pulse-bar {
+  0%   { transform: scaleY(0.15); }
+  50%  { transform: scaleY(1); }
+  100% { transform: scaleY(0.15); }
+}
+.pulse-bar { animation: pulse-bar var(--dur, 0.8s) ease-in-out infinite; transform-origin: bottom; }
+
+/* 数字滚动 */
+@keyframes count-up {
+  from { transform: translateY(60%); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+.count-roll { animation: count-up 0.4s cubic-bezier(0.22,1,0.36,1); overflow: hidden; display: inline-block; }
+
+/* 徽章扫光效果 */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+.shimmer-line {
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* 卖出倒计时脉冲边框 */
+@keyframes sell-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,68,102,0); }
+  50%      { box-shadow: 0 0 0 3px rgba(255,68,102,0.35); }
+}
+.sell-pulse { animation: sell-pulse 1.5s ease-in-out infinite; }
+@keyframes stat-enter {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.stat-enter { animation: stat-enter 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* 胜率进度条填充 */
+@keyframes bar-fill {
+  from { width: 0%; }
+}
+.bar-fill { animation: bar-fill 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* 数字脉冲高亮（值变化时） */
+@keyframes val-pulse {
+  0%   { opacity: 1; }
+  30%  { opacity: 0.4; }
+  60%  { opacity: 1; }
+  80%  { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+.val-pulse { animation: val-pulse 0.5s ease-out; }
+
+

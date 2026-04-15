@@ -19,6 +19,17 @@ import base64
 
 logger = logging.getLogger(__name__)
 
+def _raw_tx_hex(signed) -> str:
+    """兼容 eth_account 新旧版本：raw_transaction (>=0.9) / rawTransaction (<0.9)
+    始终返回不带 0x 前缀的纯 hex 字符串（调用方自行加前缀）。
+    """
+    raw = getattr(signed, 'raw_transaction', None) or getattr(signed, 'rawTransaction', None)
+    if raw is None:
+        raise AttributeError(f"SignedTransaction 对象既无 raw_transaction 也无 rawTransaction: {dir(signed)}")
+    # 用内置 bytes.hex() 确保无 0x 前缀（HexBytes.hex() 某些版本会带 0x）
+    h = bytes(raw).hex()
+    return h[2:] if h.startswith("0x") else h
+
 # 链名称映射（AVE 文档要求小写）
 CHAIN_NAME_MAP = {
     "BSC": "bsc",
@@ -197,7 +208,7 @@ class AveClient:
             if self._client and not self._client.is_closed:
                 await self._client.aclose()
             if not key:
-                raise ValueError("AVE Trade API Key 未配置，请在配置页面填写")
+                raise ValueError("OKX Trade API Key 未配置，请在配置页面填写")
             self._current_key = key
             self._current_url = url
             self._client = httpx.AsyncClient(
@@ -461,7 +472,7 @@ class AveClient:
         except Exception as sign_err:
             logger.error(f"sign_transaction failed: {sign_err} | tx={tx}")
             raise
-        return signed.raw_transaction.hex()
+        return _raw_tx_hex(signed)
 
     def _fetch_nonce_and_gas(
         self,
@@ -783,7 +794,7 @@ class AveClient:
         }
         logger.info(f"Sending approve tx: token={token_addr[:10]} spender={spender[:10]} chain={chain_id} gasPrice={approve_gas_price/1e9:.2f}Gwei")
         signed = Account.sign_transaction(approve_tx, private_key)
-        raw_hex = "0x" + signed.raw_transaction.hex()
+        raw_hex = "0x" + _raw_tx_hex(signed)
 
         with _httpx.Client(timeout=30.0) as c:
             r2 = c.post(rpc_url, json={"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":[raw_hex],"id":2})
@@ -801,7 +812,7 @@ class AveClient:
                         _nonce_local[chain_id] = latest_nonce
                         approve_tx["nonce"] = latest_nonce
                         signed2 = Account.sign_transaction(approve_tx, private_key)
-                        raw_hex2 = "0x" + signed2.raw_transaction.hex()
+                        raw_hex2 = "0x" + _raw_tx_hex(signed2)
                         r2b = c.post(rpc_url, json={"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":[raw_hex2],"id":2})
                         r2j = r2b.json()
                         if "error" in r2j:
@@ -1420,7 +1431,7 @@ class AveClient:
         sold_token_amount = sold_ratio  # monitor 收到后用 pos.token_amount * sold_ratio 更新
 
         logger.info(f"EVM sell success: {ca} tx={last_tx_hash} usdt_received={total_usdt_received} sold_ratio={sold_ratio}")
-        sell_route = "PancakeSwap Direct" if dex_fallback_used else "AVE Trade"
+        sell_route = "PancakeSwap Direct" if dex_fallback_used else "OKX Trade"
         return {
             "success": True,
             "tx": last_tx_hash,
@@ -1524,7 +1535,7 @@ class AveClient:
             "nonce":    alloc_nonce,
         }
         signed = _Account.sign_transaction(tx, private_key)
-        raw_hex = "0x" + signed.raw_transaction.hex()
+        raw_hex = "0x" + _raw_tx_hex(signed)
         logger.info(f"DEX 直接广播: router={router[:16]} nonce={alloc_nonce} gas={gas_price/1e9:.2f}Gwei")
 
         async with _httpx.AsyncClient(timeout=15.0) as c:

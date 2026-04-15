@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import eth_account; print\\(eth_account.__version__\\)\")",
+      "Bash(pip show:*)",
+      "Bash(pip3 show:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)"
+    ]
+  }
+}

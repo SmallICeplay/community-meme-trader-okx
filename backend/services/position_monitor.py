@@ -302,7 +302,7 @@ async def _sell_position(position: Position, reason: str, current_price: float):
         "symbol": symbol,
         "logo_url": logo_url,
         "hold_minutes": round((datetime.utcnow() - position.open_time).total_seconds() / 60, 1),
-        "route": result.get("route", "AVE Trade"),
+        "route": result.get("route", "OKX Trade"),
     })
     REASON_ZH = {"take_profit": "止盈", "stop_loss": "止损", "time_limit": "超时", "manual": "手动", "zero_balance": "归零", "sell_failed": "放弃"}
     reason_zh = REASON_ZH.get(reason, reason)

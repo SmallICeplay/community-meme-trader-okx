@@ -136,7 +136,10 @@ class WalletManager:
             if not password:
                 raise ValueError("WALLET_MASTER_PASSWORD 未设置，请在 .env 中配置")
 
-            self._mnemonic_cache = decrypt_mnemonic(row.value, password)
+            try:
+                self._mnemonic_cache = decrypt_mnemonic(row.value, password)
+            except Exception:
+                raise ValueError("钱包助记词解密失败，WALLET_MASTER_PASSWORD 与加密时不符，请检查 .env 配置")
             return self._mnemonic_cache
 
     async def get_wallet_async(self, chain: str) -> dict:

@@ -666,7 +666,7 @@ async def _execute_buy(ca: str, chain: str, raw_message: dict, amount_multiplier
             "token_name": meta.get("token_name", ""),
             "symbol": meta.get("symbol", ""),
             "logo_url": meta.get("logo_url", ""),
-            "route": "AVE Trade",
+            "route": "OKX Trade",
         })
         display = meta.get("symbol") or meta.get("token_name") or ca[:12] + "..."
         is_follow = bool(raw_message.get("_follow_buy_amount"))
