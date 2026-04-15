@@ -79,7 +79,7 @@ CA 监听器（指数退避自动重连）
        ↓ 毫秒级触发
 过滤引擎（多维度风控）
        ↓ 通过
-AVE 链上执行（Solana / BSC / ETH / Base）
+OKX 链上执行（Solana / BSC / ETH / Base）
        ↓ 建仓
 持仓监控（每 10 秒轮询）
        ↓
@@ -140,7 +140,7 @@ AVE 链上执行（Solana / BSC / ETH / Base）
 ┌──────────────────────▼──────────────────────────┐
 │           FastAPI Backend (全异步)               │
 │                                                  │
-│  CA Listener  →  Trade Engine  →  AVE Client     │
+│  CA Listener  →  Trade Engine  →  OKX Client     │
 │  (WS 多源)       (过滤+决策)      (4链执行)      │
 │                                                  │
 │  Position Monitor  ←→  Broadcaster               │
@@ -156,7 +156,7 @@ AVE 链上执行（Solana / BSC / ETH / Base）
 |----|------|
 | 后端 | Python 3.10+, FastAPI, SQLAlchemy async |
 | 前端 | React 18, Vite, Tailwind CSS, Recharts |
-| 链上 | AVE Trading API, eth-account (EVM), solders (Solana) |
+| 链上 | OKX Trading API, eth-account (EVM), solders (Solana) |
 | 实时 | WebSocket 双向（信号接收 + 前端推送） |
 
 ---
@@ -186,7 +186,7 @@ cp .env.example .env
 
 | 变量 | 说明 |
 |------|------|
-| `AVE_API_KEY` | AVE 交易 API 密钥 |
+| `OKX_API_KEY` | OKX 交易 API 密钥 |
 | `CA_WS_URL` | 社区信号源 WebSocket 地址 |
 | `WALLET_MASTER_PASSWORD` | 钱包加密主密码 |
 | `BACKEND_PORT` | 后端端口（默认 8000）|
@@ -211,7 +211,7 @@ backend/
 │   ├── ca_listener.py       # 社区信号 WebSocket 监听
 │   ├── trade_engine.py      # 信号过滤 + 买入决策
 │   ├── position_monitor.py  # 止盈/止损自动化
-│   ├── ave_client.py        # 4链链上交易执行
+│   ├── OKX_client.py        # 4链链上交易执行
 │   └── wallet_manager.py    # AES 加密钱包管理
 └── routers/                 # 40+ REST API 端点
 
